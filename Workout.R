@@ -1,24 +1,30 @@
-getwd()
 
+# Import the data from locally stored .xlsx file
 library(readxl)
 data <- read_xlsx(path = "C:/Users/Cillian Admin/OneDrive/Desktop/Data Projects/Workout_Data/Workout.xlsx",
           range = "A1:I17")
-library(dplyr)
+
 
 #----Data Cleaning-----
+library(dplyr)
+
 data <- as.data.frame(data)
 str(data)
-data[,7] <- as.double(data[,7])
-data$Cardio <- factor(c(1,2))
+
+#changing columns types 
+data$Weight <- as.double(data$Weight)
+data$Cardio <- as.factor(data$Cardio)
+data$Type <- as.factor(data$Type)
+data$Day <- as.factor(data$Day)
+
+#Changing column names
 colnames(data) <- c("Date", "Day", "Minutes", "Calories", "Average.HR", "Highest.HR", "Weight", "Cardio", "Type")
 
 data[11,7] <- 89.9
 data[14,7] <- 90.3
 
-#----EDA-----
+#----Feature engineering-----
 data$Calorie.Per.Min <- round(data$Calories / data$Minutes,2)
-
-
 
 
 #----Data Vis-----
@@ -37,8 +43,6 @@ ggplot(data = data, aes(x = data$Minutes, y = data$Calories
 
 
 #------
-
-
 ggplot(data = data, aes(x = Calories, y = Average.HR, 
                         color = Day)) +
         geom_point(na.rm = T, size = 5)
